@@ -3,4 +3,12 @@
     <string name="app_chat">App Chat</string>
     <string name="dang_nhap">ĐĂNG NHẬP</string>
     <string name="dang_ky">ĐĂNG KÝ</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="tab_text_1">Tin Nhấn</string>
+    <string name="tab_text_2">Danh Bạ</string>
+    <string name="tab_text_3">Nhóm</string>
+    <string name="tab_text_4">Thông Tin</string>
+
+    <!-- TODO: Remove or change this placeholder text -->
+    <string name="hello_blank_fragment">Hello blank fragment</string>
 </resources>

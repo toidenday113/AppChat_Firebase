@@ -4,7 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    tools:context=".DangKyActivity">
+    tools:context=".DangNhapActivity">
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
@@ -15,20 +15,12 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:textSize="25dp"
-            android:text="Đăng ký tài khoản"
+            android:text="Đăng nhập tài khoản"
             android:layout_marginTop="10dp"
             android:textStyle="bold"
             android:textColor="@color/colorPrimaryDark"
             android:gravity="center_horizontal"
             android:textAlignment="center"/>
-
-        <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/username"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp"
-            app:met_floatingLabel="normal"
-            android:hint="User Name"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
             android:id="@+id/email"
@@ -52,12 +44,9 @@
             android:layout_height="wrap_content"
             android:background="@drawable/botron_button"
             android:layout_marginTop="10dp"
-            android:text="Đăng Ký"
+            android:text="Đăng nhập"
             android:textSize="25dp"
             android:textColor="#fff"
             android:layout_gravity="center_horizontal"/>
-
-
-
     </LinearLayout>
 </RelativeLayout>
