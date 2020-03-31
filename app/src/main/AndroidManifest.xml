@@ -12,10 +12,14 @@
         <activity
             android:name=".MainActivity"
             android:label="@string/title_activity_main"
-            android:theme="@style/AppTheme.NoActionBar"></activity>
-        <activity android:name=".DangNhapActivity" />
-        <activity android:name=".DangKyActivity" />
-        <activity android:name=".StartActivity">
+            android:theme="@style/AppTheme.NoActionBar"
+            android:screenOrientation="fullSensor"></activity>
+        <activity android:name=".DangNhapActivity"
+            android:screenOrientation="fullSensor"/>
+        <activity android:name=".DangKyActivity"
+            android:screenOrientation="fullSensor"/>
+        <activity android:name=".StartActivity"
+            android:screenOrientation="fullSensor">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
