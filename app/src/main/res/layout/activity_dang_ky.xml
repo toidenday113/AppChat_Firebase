@@ -11,11 +11,13 @@
         android:orientation="vertical"
         android:layout_centerVertical="true">
 
+
+
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:text="Đăng ký tài khoản"
+            android:textSize="25sp"
+            android:text="@string/dang_ky_tai_khoan"
             android:layout_marginTop="10dp"
             android:textStyle="bold"
             android:textColor="@color/colorPrimaryDark"
@@ -23,41 +25,44 @@
             android:textAlignment="center"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/username"
+            android:id="@+id/metusername"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:met_floatingLabel="normal"
-            android:hint="User Name"/>
+            android:hint="@string/user_name"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/email"
+            android:id="@+id/metemail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:met_floatingLabel="normal"
-            android:hint="Email"/>
+            android:hint="@string/email"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/password"
+            android:id="@+id/metpassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:met_floatingLabel="normal"
             android:inputType="textPassword"
-            android:hint="Password"/>
+            android:hint="@string/password"/>
 
         <Button
+            android:id="@+id/btnDangKy"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="@drawable/botron_button"
             android:layout_marginTop="10dp"
-            android:text="Đăng Ký"
-            android:textSize="25dp"
+            android:text="@string/btn_dang_ky"
+            android:textSize="25sp"
             android:textColor="#fff"
             android:layout_gravity="center_horizontal"/>
 
 
 
     </LinearLayout>
+
+
 </RelativeLayout>

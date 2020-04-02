@@ -9,13 +9,14 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
-        android:layout_centerVertical="true">
+        android:layout_centerVertical="true"
+        android:layout_marginLeft="5sp">
 
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:textSize="25dp"
-            android:text="Đăng nhập tài khoản"
+            android:textSize="25sp"
+            android:text="@string/dang_nhap_tai_khoan"
             android:layout_marginTop="10dp"
             android:textStyle="bold"
             android:textColor="@color/colorPrimaryDark"
@@ -23,30 +24,31 @@
             android:textAlignment="center"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/email"
+            android:id="@+id/metemail"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:met_floatingLabel="normal"
-            android:hint="Email"/>
+            android:hint="@string/email"/>
 
         <com.rengwuxian.materialedittext.MaterialEditText
-            android:id="@+id/password"
+            android:id="@+id/metpassword"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
             app:met_floatingLabel="normal"
             android:inputType="textPassword"
-            android:hint="Password"/>
+            android:hint="@string/password"/>
 
         <Button
+            android:id="@+id/btnDangNhap"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:background="@drawable/botron_button"
+            android:layout_gravity="center_horizontal"
             android:layout_marginTop="10dp"
-            android:text="Đăng nhập"
-            android:textSize="25dp"
+            android:background="@drawable/botron_button"
+            android:text="@string/dang_nhap"
             android:textColor="#fff"
-            android:layout_gravity="center_horizontal"/>
+            android:textSize="25sp" />
     </LinearLayout>
 </RelativeLayout>

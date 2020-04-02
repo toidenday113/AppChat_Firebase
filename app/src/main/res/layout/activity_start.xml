@@ -25,7 +25,7 @@
 
     <Button
         android:id="@+id/btnSceenDangNhap"
-        android:layout_width="413dp"
+        android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="64dp"
         android:background="@color/colorPrimaryDark"
@@ -39,7 +39,7 @@
 
     <Button
         android:id="@+id/btnSceenDangKy"
-        android:layout_width="413dp"
+        android:layout_width="match_parent"
         android:layout_height="40dp"
         android:layout_marginTop="24dp"
         android:layout_marginBottom="344dp"
@@ -48,7 +48,7 @@
         android:textColor="#FFFFFF"
         app:layout_constraintBottom_toBottomOf="parent"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/btnSceenDangNhap" />
+        app:layout_constraintTop_toBottomOf="@+id/btnSceenDangNhap"
+        app:layout_constraintVertical_bias="0.0" />
 </androidx.constraintlayout.widget.ConstraintLayout>
