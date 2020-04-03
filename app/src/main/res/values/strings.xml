@@ -18,4 +18,5 @@
     <string name="btn_dang_ky">Đăng Ký</string>
     <string name="dang_nhap_tai_khoan">Đăng nhập tài khoản</string>
     <string name="dang_xuat">Đăng Xuất</string>
+    <string name="quen_mat_khau">Quên mất khẩu</string>
 </resources>

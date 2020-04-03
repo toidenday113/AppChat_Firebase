@@ -1,10 +1,13 @@
 package com.example.appchat;
 
+import android.app.AlertDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.MenuItem;
 import android.view.View;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -19,37 +22,44 @@ import com.rengwuxian.materialedittext.MaterialEditText;
 
 public class DangNhapActivity extends AppCompatActivity {
 
-    private MaterialEditText metemail, metpassword;
-    private Button btnDangNhap;
+    private MaterialEditText _metemail, _metpassword;
+    private Button _btnDangNhap;
     private FirebaseAuth mAuth;
+    private TextView _tvQuenMatKhau;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_dang_nhap);
+        // ToolBar
+        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+        getSupportActionBar().setDisplayShowHomeEnabled(true);
+
         AnhXa();
         mAuth = FirebaseAuth.getInstance();
-        btnDangNhap.setEnabled(false);
 
-        metpassword.setOnFocusChangeListener(new View.OnFocusChangeListener() {
+        FC_DangNhap();
+
+    } // End onCreate
+
+    private void FC_QuenMatKhau(){
+        _tvQuenMatKhau.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onFocusChange(View v, boolean hasFocus) {
-                if(!TextUtils.isEmpty(metemail.getText().toString()) || !TextUtils.isEmpty(metpassword.getText().toString())){
-                    btnDangNhap.setEnabled(true);
-                }else{
-                    btnDangNhap.setEnabled(false);
-                }
+            public void onClick(View v) {
+
             }
         });
+    }
 
-        btnDangNhap.setOnClickListener(new View.OnClickListener() {
+    private void FC_DangNhap(){
+        _btnDangNhap.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if(!fc_validateForm()){
                     return;
                 }
-                String txt_email = metemail.getText().toString();
-                String txt_password = metpassword.getText().toString();
+                String txt_email = _metemail.getText().toString();
+                String txt_password = _metpassword.getText().toString();
 
                 mAuth.signInWithEmailAndPassword(txt_email, txt_password)
                         .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
@@ -71,17 +81,35 @@ public class DangNhapActivity extends AppCompatActivity {
         });
     }
 
+    private void FC_ResetMatKhau(){
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Khôi phục mật khẩu");
+
+        View customlayout = getLayoutInflater().inflate(R.layout.custom_alertdialog, null);
+        builder.setView(customlayout);
+    }
     private void AnhXa(){
-        btnDangNhap = findViewById(R.id.btnDangNhap);
-        metemail = findViewById(R.id.metemail);
-        metpassword = findViewById(R.id.metpassword);
+        _btnDangNhap = findViewById(R.id.btnDangNhap);
+        _metemail = findViewById(R.id.metemail);
+        _metpassword = findViewById(R.id.metpassword);
+        _tvQuenMatKhau = findViewById(R.id.tvQuenMatKhau);
     }
 
     private boolean fc_validateForm(){
-        if(TextUtils.isEmpty(metemail.getText().toString())|| TextUtils.isEmpty(metpassword.getText().toString()) ){
+        if(TextUtils.isEmpty(_metemail.getText().toString())|| TextUtils.isEmpty(_metpassword.getText().toString()) ){
             Toast.makeText(this, "Bạn chưa nhập Email hoặc mật khẩu", Toast.LENGTH_SHORT).show();
             return false;
         }
         return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        if(item.getItemId() == android.R.id.home){
+            finish();
+            onBackPressed();
+
+        }
+        return super.onOptionsItemSelected(item);
     }
 }

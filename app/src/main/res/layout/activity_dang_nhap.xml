@@ -10,7 +10,8 @@
         android:layout_height="wrap_content"
         android:orientation="vertical"
         android:layout_centerVertical="true"
-        android:layout_marginLeft="5sp">
+        android:layout_marginLeft="5sp"
+        android:layout_marginStart="5sp">
 
         <TextView
             android:layout_width="match_parent"
@@ -50,5 +51,15 @@
             android:text="@string/dang_nhap"
             android:textColor="#fff"
             android:textSize="25sp" />
+
+        <TextView
+            android:id="@+id/tvQuenMatKhau"
+            android:layout_height="wrap_content"
+            android:layout_width="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:text="@string/quen_mat_khau"
+            android:layout_marginTop="15sp"
+            android:textStyle="italic"
+            android:textColor="@color/colorPrimary"/>
     </LinearLayout>
 </RelativeLayout>
