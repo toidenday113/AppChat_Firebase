@@ -1,6 +1,7 @@
 package com.example.appchat;
 
 import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -39,6 +40,7 @@ public class DangNhapActivity extends AppCompatActivity {
         mAuth = FirebaseAuth.getInstance();
 
         FC_DangNhap();
+        FC_QuenMatKhau();
 
     } // End onCreate
 
@@ -46,7 +48,7 @@ public class DangNhapActivity extends AppCompatActivity {
         _tvQuenMatKhau.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-
+                FC_ResetMatKhau();
             }
         });
     }
@@ -85,8 +87,32 @@ public class DangNhapActivity extends AppCompatActivity {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
         builder.setTitle("Khôi phục mật khẩu");
 
-        View customlayout = getLayoutInflater().inflate(R.layout.custom_alertdialog, null);
+        final View customlayout = getLayoutInflater().inflate(R.layout.layoutalertdialog, null);
         builder.setView(customlayout);
+
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+               MaterialEditText _metremail = customlayout.findViewById(R.id.metremail);
+               if( TextUtils.isEmpty(_metremail.getText().toString())){
+                   return;
+               }
+               mAuth.sendPasswordResetEmail(_metremail.getText().toString())
+                       .addOnCompleteListener(new OnCompleteListener<Void>() {
+                           @Override
+                           public void onComplete(@NonNull Task<Void> task) {
+                                if(task.isSuccessful()){
+                                    Toast.makeText(DangNhapActivity.this, "Bạn vui lòng kiểm tra email để khôi phục mật khẩu", Toast.LENGTH_LONG).show();
+                                }else {
+                                    Toast.makeText(DangNhapActivity.this, "Email bạn nhập vào không đúng", Toast.LENGTH_LONG).show();
+                                }
+                           }
+                       });
+            }
+        });
+
+        AlertDialog dialog = builder.create();
+        dialog.show();
     }
     private void AnhXa(){
         _btnDangNhap = findViewById(R.id.btnDangNhap);

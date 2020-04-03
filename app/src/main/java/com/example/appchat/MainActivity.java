@@ -1,68 +1,76 @@
 package com.example.appchat;
 
-import android.content.Intent;
+import android.graphics.Color;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
-import android.view.MenuItem;
 
-import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.appcompat.widget.Toolbar;
 import androidx.viewpager.widget.ViewPager;
 
 import com.example.appchat.ui.main.SectionsPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
-import com.google.firebase.auth.FirebaseAuth;
 
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabs;
-    private FirebaseAuth mAuth;
+    private static final int[] IMAGE_ACTIVE = new int[]{
+            R.drawable.ic_tinhan_active,
+            R.drawable.ic_danhba_active,
+            R.drawable.ic_nhom_active,
+            R.drawable.ic_thongtin_active,
+    };
+    private static final int[] IMAGE_NOTACTIVE = new int[]{
+            R.drawable.ic_tinnhan,
+            R.drawable.ic_danhba,
+            R.drawable.ic_nhom,
+            R.drawable.ic_thongtin,
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        // ToolBar
-       Toolbar toolbar = findViewById(R.id.Toolbar);
-        toolbar.setTitle("App Chat");
-        setSupportActionBar(toolbar);
-
-       // Tab view Page
+       //Tab view Page
+        tabs = findViewById(R.id.tabs);
+        //
         SectionsPagerAdapter sectionsPagerAdapter = new SectionsPagerAdapter(this, getSupportFragmentManager());
         ViewPager viewPager = findViewById(R.id.view_pager);
         viewPager.setAdapter(sectionsPagerAdapter);
-        tabs = findViewById(R.id.tabs);
         tabs.setupWithViewPager(viewPager);
-        //setupTabIcon();
+        setupTabIcon();
 
-        mAuth = FirebaseAuth.getInstance();
+        FC_SeclectTabActive();
+
     }
 
     private void setupTabIcon(){
-        tabs.getTabAt(0).setIcon(R.drawable.tinnhan);
-        tabs.getTabAt(1).setIcon(R.drawable.nhom);
-        tabs.getTabAt(2).setIcon(R.drawable.danhba);
-        tabs.getTabAt(3).setIcon(R.drawable.thongtin);
+        tabs.getTabAt(0).setIcon(R.drawable.ic_tinhan_active);
+        tabs.getTabAt(1).setIcon(IMAGE_NOTACTIVE[1]);
+        tabs.getTabAt(2).setIcon(IMAGE_NOTACTIVE[2]);
+        tabs.getTabAt(3).setIcon(IMAGE_NOTACTIVE[3]);
     }
 
-    @Override
-    public boolean onCreateOptionsMenu(Menu menu) {
-        MenuInflater inflater = getMenuInflater();
-        inflater.inflate(R.menu.logout_menu, menu);
-        return true;
+
+    private void FC_SeclectTabActive(){
+        tabs.setTabTextColors(Color.parseColor("#727272"), Color.parseColor("#2000FF"));
+        tabs.addOnTabSelectedListener(new TabLayout.OnTabSelectedListener() {
+            @Override
+            public void onTabSelected(TabLayout.Tab tab) {
+                int p = tab.getPosition();
+                tabs.getTabAt(p).setIcon(IMAGE_ACTIVE[p]);
+
+            }
+
+            @Override
+            public void onTabUnselected(TabLayout.Tab tab) {
+                int p = tab.getPosition();
+                tabs.getTabAt(p).setIcon(IMAGE_NOTACTIVE[p]);
+            }
+
+            @Override
+            public void onTabReselected(TabLayout.Tab tab) {
+
+            }
+        });
     }
 
-    @Override
-    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
-        switch(item.getItemId()){
-            case R.id.mDangXuat:
-                mAuth.signOut();
-                Intent intentMain = new Intent(MainActivity.this, StartActivity.class);
-                startActivity(intentMain);
-                finish();
-                break;
-        }
-        return super.onOptionsItemSelected(item);
-    }
 }

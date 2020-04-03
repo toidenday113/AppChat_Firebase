@@ -1,18 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:orientation="horizontal"
-    android:layout_gravity="center_vertical">
+    android:layout_gravity="center_vertical"
+    android:layout_marginLeft="10sp">
 
     <com.rengwuxian.materialedittext.MaterialEditText
-        android:id="@+id/metemail"
+        android:id="@+id/metremail"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="10dp"
         app:met_floatingLabel="normal"
-        android:inputType="textPassword"
         android:hint="@string/email"/>
 
 </LinearLayout>

@@ -2,13 +2,16 @@ package com.example.appchat.ui.main;
 
 import android.content.Context;
 
-import androidx.annotation.Nullable;
 import androidx.annotation.StringRes;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentPagerAdapter;
 
 import com.example.appchat.R;
+import com.example.appchat.TabPage.DanhBaFragment;
+import com.example.appchat.TabPage.NhomFragment;
+import com.example.appchat.TabPage.ThongTinFragment;
+import com.example.appchat.TabPage.TinNhanFragment;
 
 /**
  * A [FragmentPagerAdapter] that returns a fragment corresponding to
@@ -29,18 +32,35 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
     public Fragment getItem(int position) {
         // getItem is called to instantiate the fragment for the given page.
         // Return a PlaceholderFragment (defined as a static inner class below).
-        return PlaceholderFragment.newInstance(position + 1);
+      //  return PlaceholderFragment.newInstance(position + 1);
+        Fragment fragment = null;
+        switch(position){
+            case 0:
+                fragment = new TinNhanFragment();
+                break;
+            case 1:
+                fragment = new DanhBaFragment();
+                break;
+            case 2:
+                fragment = new NhomFragment();
+                break;
+            case 3:
+                fragment = new ThongTinFragment();
+                break;
+        }
+        return fragment;
     }
 
-    @Nullable
+
     @Override
     public CharSequence getPageTitle(int position) {
-        return mContext.getResources().getString(TAB_TITLES[position]);
+       return mContext.getResources().getString(TAB_TITLES[position]);
+
     }
 
     @Override
     public int getCount() {
         // Show 2 total pages.
-        return 4;
+        return TAB_TITLES.length;
     }
 }
