@@ -47,6 +47,8 @@ public class SectionsPagerAdapter extends FragmentPagerAdapter {
             case 3:
                 fragment = new ThongTinFragment();
                 break;
+            default:
+                throw new IllegalStateException("Unexpected value: " + position);
         }
         return fragment;
     }

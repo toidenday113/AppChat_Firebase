@@ -8,6 +8,7 @@
 
     <!-- TODO: Update blank fragment layout -->
     <LinearLayout
+        android:id="@+id/lnMain"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:orientation="vertical"
@@ -35,6 +36,7 @@
             android:textStyle="bold"/>
 
         <LinearLayout
+            android:id="@+id/row1"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
@@ -54,6 +56,7 @@
         </LinearLayout>
 
         <LinearLayout
+            android:id="@+id/row2"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
@@ -75,6 +78,7 @@
 
 
         <LinearLayout
+            android:id="@+id/row3"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:orientation="horizontal"
@@ -83,13 +87,14 @@
             <ImageView
                 android:src="@drawable/ic_logout_32"
                 android:layout_height="wrap_content"
-                android:layout_width="wrap_content" />
+                android:layout_width="wrap_content"
+                android:contentDescription="@string/todo" />
             <TextView
                 android:id="@+id/tvDangXuat"
-                android:layout_marginLeft="10sp"
+                android:layout_marginStart="10sp"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Đăng Xuất"
+                android:text="@string/dang_xuat"
                 android:textColor="#000000"
                 android:textSize="20sp"/>
         </LinearLayout>
@@ -99,7 +104,7 @@
         android:id="@+id/ivbg"
         android:layout_width="700sp"
         android:layout_height="990sp"
-        android:contentDescription="TODO"
+        android:contentDescription="@string/todo"
         android:scaleType="fitXY"
         android:src="@mipmap/bgapp"
         app:layout_constraintBottom_toBottomOf="parent"
