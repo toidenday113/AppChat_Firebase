@@ -12,10 +12,11 @@
         android:src="@mipmap/ic_launcher"/>
 
     <TextView
+        android:id="@+id/tv_Message"
         android:layout_height="wrap_content"
         android:layout_width="wrap_content"
         android:background="@drawable/bg_left"
-         android:layout_toRightOf="@id/profile_image"
+        android:layout_toRightOf="@id/profile_image"
         android:layout_marginLeft="5sp"
         android:padding="8sp"
         android:text="Hello"/>

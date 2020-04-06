@@ -1,6 +1,7 @@
 package com.example.appchat.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.appchat.MessagerActivity;
 import com.example.appchat.Model.User;
 import com.example.appchat.R;
 
@@ -35,7 +37,7 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
 
     @Override
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
-            User user = _mUser.get(position);
+           final User user = _mUser.get(position);
             holder.username.setText(user.getUsername());
 
             if(user.getImageURL().equals("default")){
@@ -43,6 +45,16 @@ public class UserAdapter extends RecyclerView.Adapter<UserAdapter.ViewHolder> {
             }else{
                 Glide.with(_mContext).load(user.getImageURL()).into(holder.profile_image);
             }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intentMessager = new Intent(_mContext, MessagerActivity.class);
+                    intentMessager.putExtra("userid", user.getId());
+                    _mContext.startActivity(intentMessager);
+                    //Toast.makeText(_mContext,  user.toString(), Toast.LENGTH_SHORT).show();
+                }
+            });
     }
 
     @Override

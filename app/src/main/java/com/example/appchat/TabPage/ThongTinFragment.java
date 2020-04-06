@@ -30,7 +30,7 @@ import de.hdodenhof.circleimageview.CircleImageView;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link ThongTinFragment#newInstance} factory method to
+ * Use the  factory method to
  * create an instance of this fragment.
  */
 public class ThongTinFragment extends Fragment {
@@ -40,6 +40,7 @@ public class ThongTinFragment extends Fragment {
     private Animation _bganim;
     private View root;
     private FirebaseAuth mAuth;
+    private FirebaseUser firebaseUser;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -58,14 +59,15 @@ public class ThongTinFragment extends Fragment {
     }
 
     private void LoadProfile() {
-        final FirebaseUser firebaseUser = mAuth.getCurrentUser();
+        firebaseUser = mAuth.getCurrentUser();
         DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User u = dataSnapshot.getValue(User.class);
+
                 Log.i("ThongTin USer", u.toString());
-                assert u != null;
+
                 if(!u.getImageURL().equals("default")){
                     Glide.with(getContext()).load(u.getImageURL()).into(_ivavatar);
                 }

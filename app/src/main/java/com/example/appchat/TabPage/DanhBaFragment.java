@@ -27,14 +27,14 @@ import java.util.List;
 
 /**
  * A simple {@link Fragment} subclass.
- * Use the {@link DanhBaFragment#newInstance} factory method to
+ * Use the  factory method to
  * create an instance of this fragment.
  */
 public class DanhBaFragment extends Fragment {
 
     private RecyclerView _rvDanhBa;
     private UserAdapter _userAdapter;
-    private List<User> _mUsers = null;
+    private List<User> _mUsers;
     private FirebaseUser firebaseUser;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -48,9 +48,9 @@ public class DanhBaFragment extends Fragment {
         _rvDanhBa.setLayoutManager(new LinearLayoutManager(getContext()));
         _mUsers = new ArrayList<>();
         readUsers();
-
         return root;
     }
+
 
     private void readUsers() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();

@@ -12,14 +12,9 @@
         android:layout_height="wrap_content"
         android:layout_alignParentEnd="true"
         android:layout_alignParentRight="true">
-       <de.hdodenhof.circleimageview.CircleImageView
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:id="@+id/profile_image"
-           android:visibility="gone"/>
 
         <TextView
-            android:id="@+id/tvMesseger"
+            android:id="@+id/tv_Message"
             android:layout_height="wrap_content"
             android:layout_width="wrap_content"
             android:background="@drawable/bg_right"
