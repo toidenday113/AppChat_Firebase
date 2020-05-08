@@ -1,10 +1,10 @@
 package com.example.appchat.Adapter;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
@@ -17,6 +17,8 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 
 import java.util.List;
+
+import de.hdodenhof.circleimageview.CircleImageView;
 
 public class MessagerAdapter extends RecyclerView.Adapter<MessagerAdapter.ViewHolder> {
 
@@ -52,6 +54,7 @@ public class MessagerAdapter extends RecyclerView.Adapter<MessagerAdapter.ViewHo
         Chat chat = _mChat.get(position);
         holder.Message.setText(chat.getMessage());
         if(!_Images_url.equals("default")){
+            Log.i("_Images_url", _Images_url);
             Glide.with(_mContext).load(_Images_url).into(holder.Image_Avatar);
         }
 
@@ -64,7 +67,7 @@ public class MessagerAdapter extends RecyclerView.Adapter<MessagerAdapter.ViewHo
 
     class ViewHolder extends RecyclerView.ViewHolder{
         TextView Message;
-        ImageView Image_Avatar;
+        CircleImageView Image_Avatar;
 
         ViewHolder(View itemView){
             super(itemView);
