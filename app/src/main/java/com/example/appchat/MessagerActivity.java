@@ -82,7 +82,8 @@ public class MessagerActivity extends AppCompatActivity {
 
     private void FC_ReadMessageChat(final String myid, final String userid, final String imagesurl){
         _rv_Messager.setHasFixedSize(true);
-        LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
+        
+		LinearLayoutManager linearLayoutManager = new LinearLayoutManager(getApplicationContext());
         linearLayoutManager.setStackFromEnd(true); // các item từ dưới đi lên
         _rv_Messager.setLayoutManager(linearLayoutManager);
 

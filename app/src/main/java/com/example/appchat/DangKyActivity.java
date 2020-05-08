@@ -1,5 +1,6 @@
 package com.example.appchat;
 
+import android.app.ProgressDialog;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
@@ -27,6 +28,8 @@ public class DangKyActivity extends AppCompatActivity {
     private DatabaseReference reference;
     private MaterialEditText username, email, password;
     private Button btnDangKy;
+
+    private ProgressDialog progressBar;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -38,6 +41,7 @@ public class DangKyActivity extends AppCompatActivity {
 
         mAuth = FirebaseAuth.getInstance();
 
+        FC_ShowProgrcess();
 
         btnDangKy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -49,10 +53,18 @@ public class DangKyActivity extends AppCompatActivity {
                 if(!fcvalidateForm()){
                     return;
                 }
+                progressBar.show();
                 fcregister(txt_username, txt_email, txt_password);
             }
         });
 
+
+
+    } // End OnCreate
+
+    private void FC_ShowProgrcess(){
+        progressBar = new ProgressDialog(this, R.style.MyTheme);
+        progressBar.setCancelable(false);
     }
 
 
@@ -76,6 +88,7 @@ public class DangKyActivity extends AppCompatActivity {
                                 @Override
                                 public void onComplete(@NonNull Task<Void> task) {
                                     if( task.isSuccessful() ){
+                                        progressBar.dismiss();
                                         Intent intentMain = new Intent(DangKyActivity.this, MainActivity.class);
                                         intentMain.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK| Intent.FLAG_ACTIVITY_NEW_TASK);
                                         startActivity(intentMain);
@@ -84,6 +97,7 @@ public class DangKyActivity extends AppCompatActivity {
                                 }
                             });
                         }else{
+                            progressBar.dismiss();
                             Toast.makeText(DangKyActivity.this, "Bạn không thể đăng ký với email hoặc mật khẩu này", Toast.LENGTH_SHORT).show();
                         }
                     }

@@ -1,6 +1,7 @@
 package com.example.appchat;
 
 import android.app.AlertDialog;
+import android.app.ProgressDialog;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
@@ -27,6 +28,7 @@ public class DangNhapActivity extends AppCompatActivity {
     private Button _btnDangNhap;
     private FirebaseAuth mAuth;
     private TextView _tvQuenMatKhau;
+    private ProgressDialog progressBar;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -39,10 +41,16 @@ public class DangNhapActivity extends AppCompatActivity {
         AnhXa();
         mAuth = FirebaseAuth.getInstance();
 
+        FC_ShowProgrcess();
         FC_DangNhap();
         FC_QuenMatKhau();
 
     } // End onCreate
+
+    private void FC_ShowProgrcess(){
+        progressBar = new ProgressDialog(this, R.style.MyTheme);
+        progressBar.setCancelable(false);
+    }
 
     private void FC_QuenMatKhau(){
         _tvQuenMatKhau.setOnClickListener(new View.OnClickListener() {
@@ -63,11 +71,15 @@ public class DangNhapActivity extends AppCompatActivity {
                 String txt_email = _metemail.getText().toString();
                 String txt_password = _metpassword.getText().toString();
 
+                progressBar.show();
+
                 mAuth.signInWithEmailAndPassword(txt_email, txt_password)
                         .addOnCompleteListener( new OnCompleteListener<AuthResult>() {
                             @Override
                             public void onComplete(@NonNull Task<AuthResult> task) {
                                 if(task.isSuccessful()){
+
+                                    progressBar.dismiss();
                                     FirebaseUser user = mAuth.getCurrentUser();
                                     user.getUid();
                                     Intent intentMain = new Intent(DangNhapActivity.this, MainActivity.class);
@@ -75,6 +87,7 @@ public class DangNhapActivity extends AppCompatActivity {
                                     startActivity(intentMain);
                                     finish();
                                 }else{
+                                    progressBar.dismiss();
                                     Toast.makeText(DangNhapActivity.this, "Email hay mật khẩu đăng nhập không đúng", Toast.LENGTH_LONG).show();
                                 }
                             }

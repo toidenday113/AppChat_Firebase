@@ -1,5 +1,6 @@
 package com.example.appchat.TabPage;
 
+import android.app.ProgressDialog;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -36,6 +37,8 @@ public class DanhBaFragment extends Fragment {
     private UserAdapter _userAdapter;
     private List<User> _mUsers;
     private FirebaseUser firebaseUser;
+
+    private ProgressDialog progressBar;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -48,9 +51,15 @@ public class DanhBaFragment extends Fragment {
         _rvDanhBa.setLayoutManager(new LinearLayoutManager(getContext()));
         _mUsers = new ArrayList<>();
         readUsers();
+        FC_ShowProgrcess();
         return root;
     }
 
+    private void FC_ShowProgrcess(){
+        progressBar = new ProgressDialog(getContext(), R.style.MyTheme);
+        progressBar.setCancelable(false);
+        progressBar.show();
+    }
 
     private void readUsers() {
         firebaseUser = FirebaseAuth.getInstance().getCurrentUser();
@@ -66,11 +75,10 @@ public class DanhBaFragment extends Fragment {
                     if(!firebaseUser.getUid().equals(user.getId()) ){
                         _mUsers.add(user);
                     }
-
                 }
-
                 _userAdapter = new UserAdapter(getContext(), _mUsers);
                 _rvDanhBa.setAdapter(_userAdapter);
+                progressBar.dismiss();
             }
 
             @Override
