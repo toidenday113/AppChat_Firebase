@@ -8,6 +8,12 @@ import androidx.viewpager.widget.ViewPager;
 
 import com.example.appchat.ui.main.SectionsPagerAdapter;
 import com.google.android.material.tabs.TabLayout;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+
+import java.util.HashMap;
 
 public class MainActivity extends AppCompatActivity {
     private TabLayout tabs;
@@ -24,11 +30,13 @@ public class MainActivity extends AppCompatActivity {
             R.drawable.ic_thongtin,
     };
 
+    private FirebaseUser _fuser;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        _fuser = FirebaseAuth.getInstance().getCurrentUser();
        //Tab view Page
         tabs = findViewById(R.id.tabs);
         //
@@ -73,4 +81,30 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void FC_Status(String status){
+        DatabaseReference reference = FirebaseDatabase.getInstance().getReference("Users").child(_fuser.getUid());
+
+        HashMap<String,Object> hashMap = new HashMap<>();
+        hashMap.put("status", status);
+
+        reference.updateChildren(hashMap);
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        FC_Status("online");
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+        //FC_Status("offline");
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        FC_Status("offline");
+    }
 }
