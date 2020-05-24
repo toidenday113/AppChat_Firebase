@@ -12,7 +12,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appchat.Adapter.UserAdapter;
-import com.example.appchat.Model.Chat;
+import com.example.appchat.Model.ChatList;
 import com.example.appchat.Model.User;
 import com.example.appchat.R;
 import com.google.firebase.auth.FirebaseAuth;
@@ -34,7 +34,7 @@ public class TinNhanFragment extends Fragment {
     private FirebaseUser _fUser;
     private DatabaseReference reference;
 
-    private List<String> _userList;
+    private List<ChatList> _userList;
 
     private RecyclerView _rv_TinNhan;
     private View root;
@@ -51,24 +51,17 @@ public class TinNhanFragment extends Fragment {
 
         _userList = new ArrayList<>();
 
-        reference = FirebaseDatabase.getInstance().getReference("Chats");
+        reference = FirebaseDatabase.getInstance().getReference("ChatList").child(_fUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 _userList.clear();
 
                 for( DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    Chat chat = snapshot.getValue(Chat.class);
-                    if( chat.getSender().equals(_fUser.getUid()) ){
-                        _userList.add(chat.getReceiver());
-                    }
-
-                    if( chat.getReceiver().equals(_fUser.getUid()) ){
-                        _userList.add(chat.getSender());
-                    }
+                        ChatList chatlist = snapshot.getValue(ChatList.class);
+                        _userList.add(chatlist);
                 }
-
-                readChats();
+                ReadChatList();
             }
 
             @Override
@@ -77,10 +70,37 @@ public class TinNhanFragment extends Fragment {
             }
         });
 
+
         return root;
     }
 
-    private void readChats() {
+    private void ReadChatList() {
+        _mUsers = new ArrayList<>();
+        reference = FirebaseDatabase.getInstance().getReference("Users");
+        reference.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                _mUsers.clear();
+                for( DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    User user = snapshot.getValue(User.class);
+                    for (ChatList chatlist : _userList){
+                        if(user.getId().equals(chatlist.getId())){
+                            _mUsers.add(user);
+                        }
+                    }
+                }
+                userAdapter = new UserAdapter(getContext(), _mUsers);
+                _rv_TinNhan.setAdapter(userAdapter);
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+    }
+
+   /* private void readChats() {
         _mUsers = new ArrayList<>();
 
         reference = FirebaseDatabase.getInstance().getReference("Users");
@@ -93,24 +113,25 @@ public class TinNhanFragment extends Fragment {
                     User user = snapshot.getValue(User.class);
 
                     for (String id : _userList){
-                        assert user != null;
+                        //assert user != null;
                         if( user.getId().equals(id) ){
                             if( _mUsers.size() != 0 ){
-                                for(User user1 : _mUsers) {
-                                    if( !user.getId().equals(user1.getId()) ){
+                                *//*for(User user1 : _mUsers) {
+                                    if( ! user.getId().equals(user1.getId()) ){
                                         _mUsers.add(user);
                                     }
-                                }
-                                /*for(int i =0; i< _mUsers.size(); i++){
+                                }*//*
+                                for(int i = 0; i< _mUsers.size(); i++){
                                     if( !user.getId().equals(_mUsers.get(i).getId()) ){
                                         _mUsers.add(user);
                                     }
-                                }*/
+                                }
                             }else{
                                 _mUsers.add(user);
                             }
                         }
                     }
+
                 }
 
                 userAdapter = new UserAdapter(getContext(), _mUsers);
@@ -124,7 +145,7 @@ public class TinNhanFragment extends Fragment {
         });
 
 
-    }
+    }*/
 
     private void AnhXa() {
         _rv_TinNhan = root.findViewById(R.id.rvTinNhan);

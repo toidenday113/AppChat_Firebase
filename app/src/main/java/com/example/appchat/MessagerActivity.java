@@ -157,6 +157,24 @@ public class MessagerActivity extends AppCompatActivity {
                 }
             }
         });
+
+        final DatabaseReference chatRef = FirebaseDatabase.getInstance().getReference("ChatList")
+                .child(_fuser.getUid())
+                .child(userid);
+
+        chatRef.addListenerForSingleValueEvent(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                if( !dataSnapshot.exists() ){
+                    chatRef.child("id").setValue(userid);
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
     }
 
     private void FC_LoadProfile(){
