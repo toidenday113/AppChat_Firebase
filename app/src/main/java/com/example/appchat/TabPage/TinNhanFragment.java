@@ -89,7 +89,7 @@ public class TinNhanFragment extends Fragment {
                         }
                     }
                 }
-                userAdapter = new UserAdapter(getContext(), _mUsers);
+                userAdapter = new UserAdapter(getContext(), _mUsers, true);
                 _rv_TinNhan.setAdapter(userAdapter);
             }
 

@@ -74,15 +74,17 @@ public class ThongTinFragment extends Fragment {
 
         mAuth= FirebaseAuth.getInstance();
         storageReference = FirebaseStorage.getInstance().getReference("uploads");
-
+        firebaseUser = mAuth.getCurrentUser();
         AnhXa();
 
         _bganim = AnimationUtils.loadAnimation(getContext(), R.anim.bganim);
         _ivbg.animate().translationY(-700).setDuration(800).setStartDelay(300);
+        if(firebaseUser != null){
+            fc_LoadProfile();
+            fc_EditProfile();
+            fc_DangXuat();
+        }
 
-        fc_LoadProfile();
-        fc_EditProfile();
-        fc_DangXuat();
 
 
        return root;
@@ -172,7 +174,7 @@ public class ThongTinFragment extends Fragment {
     }
 
     private void fc_LoadProfile() {
-        firebaseUser = mAuth.getCurrentUser();
+
         reference = FirebaseDatabase.getInstance().getReference("Users").child(firebaseUser.getUid());
         reference.addValueEventListener(new ValueEventListener() {
             @Override
@@ -182,7 +184,7 @@ public class ThongTinFragment extends Fragment {
                 Log.i("ThongTin USer", u.toString());
 
                 if(!u.getImageURL().equals("default")){
-                    Glide.with(getContext()).load(u.getImageURL()).into(_ivavatar);
+                    Glide.with(ThongTinFragment.this).load(u.getImageURL()).into(_ivavatar);
                 }
                 _tvName.setText(u.getUsername());
                 _tv_detail_email.setText(firebaseUser.getEmail());
@@ -200,9 +202,8 @@ public class ThongTinFragment extends Fragment {
             @Override
             public void onClick(View v) {
                 mAuth.signOut();
-                Intent intentStart = new Intent(getActivity(), StartActivity.class);
+                Intent intentStart = new Intent(getContext(), StartActivity.class);
                 startActivity(intentStart);
-                getActivity().finish();
             }
         });
     }

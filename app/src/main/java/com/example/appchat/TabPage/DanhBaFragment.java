@@ -76,7 +76,7 @@ public class DanhBaFragment extends Fragment {
                         _mUsers.add(user);
                     }
                 }
-                _userAdapter = new UserAdapter(getContext(), _mUsers);
+                _userAdapter = new UserAdapter(getContext(), _mUsers, false);
                 _rvDanhBa.setAdapter(_userAdapter);
                 progressBar.dismiss();
             }
