@@ -16,6 +16,7 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.example.appchat.Adapter.GroupAdapter;
+import com.example.appchat.CreateGroupBottomSheetDialog;
 import com.example.appchat.Model.GroupChat;
 import com.example.appchat.Model.mGroup;
 import com.example.appchat.R;
@@ -60,19 +61,27 @@ public class NhomFragment extends Fragment {
         fAuth = FirebaseAuth.getInstance();
         fUser = fAuth.getCurrentUser();
         fDatabase = FirebaseDatabase.getInstance();
+
         arrGroup = new ArrayList<>();
         arrMGroup = new ArrayList<>();
+
 
         MapObject();
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(), LinearLayoutManager.VERTICAL, false);
         rvGroup.setLayoutManager(layoutManager);
+
+        groupAdapter = new GroupAdapter(getContext(), arrGroup, arrMGroup);
+        rvGroup.setAdapter(groupAdapter);
+
 
         LoadListGroup();
 
         fabAddGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                CreateGroup().show();
+              //  CreateGroup().show();
+                CreateGroupBottomSheetDialog createGroupBottomSheetDialog = new CreateGroupBottomSheetDialog();
+                createGroupBottomSheetDialog.show(getParentFragmentManager(),"BottomSheet");
             }
         });
 
@@ -155,9 +164,8 @@ public class NhomFragment extends Fragment {
                 arrMGroup.clear();
 
                 for(DataSnapshot snapshot : dataSnapshot.getChildren()){
-                    String idNumberGroup = snapshot.getKey();
-                    mGroup idGroup = snapshot.getValue(mGroup.class);
-                    arrMGroup.add(new mGroup(idNumberGroup, idGroup.getIdGroup()));
+                    mGroup mgroup = new mGroup(snapshot.getKey(), snapshot.child("idGroup").getValue().toString());
+                    arrMGroup.add(mgroup);
                 }
 
                 DatabaseReference RefGroup = fDatabase.getReference("Groups");
