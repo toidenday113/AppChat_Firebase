@@ -1,5 +1,6 @@
 package com.example.appchat;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
@@ -64,6 +65,7 @@ public class MessagerActivity extends AppCompatActivity {
 
     private List<Chat> _mChat;
     private MessagerAdapter messagerAdapter;
+    private Context mContext ;
 
     private APIService apiService;
     private boolean notify = false;
@@ -256,12 +258,14 @@ public class MessagerActivity extends AppCompatActivity {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 User u = dataSnapshot.getValue(User.class);
-                if(!u.getImageURL().equals("default")){
-                    Glide.with(MessagerActivity.this).load(u.getImageURL()).into(_iv_Profile_Image);
+                if(mContext != null) {
+                    if (!u.getImageURL().equals("default")) {
+                        Glide.with(MessagerActivity.this).load(u.getImageURL()).into(_iv_Profile_Image);
+                    }
+                    _tvUsername.setText(u.getUsername());
                 }
-                _tvUsername.setText(u.getUsername());
+                    FC_ReadMessageChat(_fuser.getUid(), userid, u.getImageURL());
 
-                FC_ReadMessageChat(_fuser.getUid(), userid, u.getImageURL());
             }
 
             @Override
@@ -291,5 +295,17 @@ public class MessagerActivity extends AppCompatActivity {
         _et_ContentSend = findViewById(R.id.et_ContentSend);
         _btn_SendImage = findViewById(R.id.btn_sendImage);
         _rv_Messager = findViewById(R.id.rv_ContentChat);
+    }
+
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+        mContext = null;
+    }
+
+    @Override
+    protected void onStart() {
+        super.onStart();
+        mContext = getBaseContext();
     }
 }
