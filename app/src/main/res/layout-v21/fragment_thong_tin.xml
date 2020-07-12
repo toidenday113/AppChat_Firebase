@@ -32,18 +32,17 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center_horizontal"
                 android:layout_marginTop="50sp" />
-
+            
             <com.google.android.material.floatingactionbutton.FloatingActionButton
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
                 android:layout_alignEnd="@+id/ivavatar"
-                android:layout_marginTop="30dp"
+                android:layout_marginTop="20dp"
                 android:id="@+id/fa_edit_profile"
                 android:layout_alignRight="@+id/ivavatar"
                 android:src="@drawable/ic_edit_black_24dp"/>
         </RelativeLayout>
-
         <TextView
             android:id="@+id/tvName"
             android:layout_width="wrap_content"
@@ -135,10 +134,11 @@
                 android:clickable="true"
                 android:text="Sign out"
                 android:layout_height="wrap_content" />
+
         </RelativeLayout>
 
     </LinearLayout>
-     <ImageView
+    <ImageView
         android:id="@+id/ivbg"
         android:layout_width="700sp"
         android:layout_height="990sp"
@@ -151,4 +151,5 @@
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toTopOf="parent"
         tools:ignore="MissingConstraints" />
+
 </androidx.constraintlayout.widget.ConstraintLayout>

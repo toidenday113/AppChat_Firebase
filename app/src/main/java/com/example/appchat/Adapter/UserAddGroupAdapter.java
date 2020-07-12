@@ -60,10 +60,11 @@ public class UserAddGroupAdapter  extends RecyclerView.Adapter<UserAddGroupAdapt
                     if(holder.cbCheckUser.isChecked()){
                        // Toast.makeText(mContext, mUser.get(position).getUsername(), Toast.LENGTH_SHORT).show();
                         arrUserJoinGroup.add(mUser.get(position).getId());
+                        Toast.makeText(mContext, arrUserJoinGroup.size()+"", Toast.LENGTH_SHORT).show();
                     }else{
                         if(arrUserJoinGroup.contains( mUser.get(position).getId()) ){
                             int p = arrUserJoinGroup.indexOf(mUser.get(position).getId());
-                            Toast.makeText(mContext, p+"", Toast.LENGTH_SHORT).show();
+                            //Toast.makeText(mContext, p+"", Toast.LENGTH_SHORT).show();
                             arrUserJoinGroup.remove(p);
                         }
                     }

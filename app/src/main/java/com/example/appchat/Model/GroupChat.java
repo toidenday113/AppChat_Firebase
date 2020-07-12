@@ -1,12 +1,14 @@
 package com.example.appchat.Model;
 
-public class GroupChat {
+import java.io.Serializable;
+
+public class GroupChat implements Serializable {
     private String id;
     private String name;
     private String avatar;
     private String admin;
 
-    public GroupChat() {
+    public GroupChat()  {
     }
 
     public GroupChat(String id, String name, String avatar, String admin) {

@@ -20,6 +20,12 @@ import com.bumptech.glide.Glide;
 import com.example.appchat.Adapter.MessagerAdapter;
 import com.example.appchat.Model.Chat;
 import com.example.appchat.Model.User;
+import com.example.appchat.Notifications.Client;
+import com.example.appchat.Notifications.Data;
+import com.example.appchat.Notifications.MyRespone;
+import com.example.appchat.Notifications.Sender;
+import com.example.appchat.Notifications.Token;
+import com.example.appchat.TabPage.APIService;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -28,6 +34,7 @@ import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
@@ -35,6 +42,9 @@ import java.util.HashMap;
 import java.util.List;
 
 import de.hdodenhof.circleimageview.CircleImageView;
+import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 
 public class MessagerActivity extends AppCompatActivity {
 
@@ -54,6 +64,9 @@ public class MessagerActivity extends AppCompatActivity {
 
     private List<Chat> _mChat;
     private MessagerAdapter messagerAdapter;
+
+    private APIService apiService;
+    private boolean notify = false;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -64,9 +77,12 @@ public class MessagerActivity extends AppCompatActivity {
         AnhXa();
         FC_ToolBarChat();
 
+        apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
+
         _btn_Send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                notify = true;
                 String msg = _et_ContentSend.getText().toString();
                 if(!msg.equals("")){
                     FC_SendMessager(_fuser.getUid(), userid, msg);
@@ -142,7 +158,7 @@ public class MessagerActivity extends AppCompatActivity {
         });
     }
 
-    private void FC_SendMessager(String sender, String receiver, String message){
+    private void FC_SendMessager(String sender, final String receiver, String message){
         DatabaseReference reference_send = FirebaseDatabase.getInstance().getReference();
         HashMap<String, Object> hashMap = new HashMap<>();
         hashMap.put("sender", sender);
@@ -172,6 +188,61 @@ public class MessagerActivity extends AppCompatActivity {
 
             @Override
             public void onCancelled(@NonNull DatabaseError databaseError) {
+
+            }
+        });
+        final String msg = message;
+        reference = FirebaseDatabase.getInstance().getReference("Users").child(_fuser.getUid());
+        reference.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                User user = snapshot.getValue(User.class);
+                if(notify) {
+                    sendNotification(receiver, user.getUsername(), msg);
+
+                }
+                notify = false;
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
+
+    }
+    private void sendNotification(String receiver, final String username, final String message){
+        DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
+        Query query = tokens.orderByKey().equalTo(receiver);
+        query.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
+                for(DataSnapshot snapshot : dataSnapshot.getChildren()){
+                    Token token = snapshot.getValue(Token.class);
+                    Data data = new Data(_fuser.getUid(), R.mipmap.ic_launcher, username+":"+ message, "New Messager",userid);
+
+                    Sender sender = new Sender(data, token.getToken());
+                    apiService.sendNotification(sender)
+                            .enqueue(new Callback<MyRespone>() {
+                                @Override
+                                public void onResponse(Call<MyRespone> call, Response<MyRespone> response) {
+                                    if(response.code() == 200){
+                                        if(response.body().success != 1){
+                                            Toast.makeText(MessagerActivity.this, "Failed", Toast.LENGTH_SHORT).show();
+                                        }
+                                    }
+                                }
+
+                                @Override
+                                public void onFailure(Call<MyRespone> call, Throwable t) {
+
+                                }
+                            });
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
 
             }
         });

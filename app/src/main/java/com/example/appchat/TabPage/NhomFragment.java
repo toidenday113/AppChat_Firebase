@@ -183,8 +183,9 @@ public class NhomFragment extends Fragment {
 
                         }
 
-                        groupAdapter = new GroupAdapter(getContext(), arrGroup, arrMGroup);
-                        rvGroup.setAdapter(groupAdapter);
+//                        groupAdapter = new GroupAdapter(getContext(), arrGroup, arrMGroup);
+//                        rvGroup.setAdapter(groupAdapter);
+                        groupAdapter.notifyDataSetChanged();
 
                     }
 

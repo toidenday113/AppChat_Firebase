@@ -1,6 +1,7 @@
 package com.example.appchat.Adapter;
 
 import android.content.Context;
+import android.content.Intent;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -11,6 +12,7 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.example.appchat.MessagerGroupActivity;
 import com.example.appchat.Model.GroupChat;
 import com.example.appchat.Model.mGroup;
 import com.example.appchat.R;
@@ -40,13 +42,25 @@ public class GroupAdapter extends RecyclerView.Adapter<GroupAdapter.ViewHolder> 
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ViewHolder holder, final int position) {
             GroupChat groupChat = arrGroupChat.get(position);
             holder.tvName.setText(groupChat.getName());
 
             if(!groupChat.getAvatar().equals("default")){
                 Glide.with(context).load(groupChat.getAvatar()).into(holder.ivAvatar);
             }
+
+            holder.itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+
+                    GroupChat item = arrGroupChat.get(position);
+
+                    Intent intentMessagerGroup = new Intent(context, MessagerGroupActivity.class);
+                    intentMessagerGroup.putExtra("itemGroup",  item);
+                    context.startActivity(intentMessagerGroup);
+                }
+            });
     }
 
     @Override
