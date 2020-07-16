@@ -7,10 +7,20 @@ import android.view.ViewGroup;
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
+import com.example.appchat.Model.MessegerGroupChat;
+
+import java.util.List;
+
 public class MessagerGroupAdapter extends RecyclerView.Adapter<MessagerGroupAdapter.ViewHolder> {
 
     private Context _mContext;
-    private
+
+    public MessagerGroupAdapter(Context _mContext, List<MessegerGroupChat> arrMessegeGroup) {
+        this._mContext = _mContext;
+        this.arrMessegeGroup = arrMessegeGroup;
+    }
+
+    private List<MessegerGroupChat> arrMessegeGroup;
 
     @NonNull
     @Override
@@ -25,7 +35,7 @@ public class MessagerGroupAdapter extends RecyclerView.Adapter<MessagerGroupAdap
 
     @Override
     public int getItemCount() {
-        return 0;
+        return arrMessegeGroup.size();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder{
