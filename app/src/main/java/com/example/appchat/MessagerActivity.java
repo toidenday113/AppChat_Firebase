@@ -41,6 +41,7 @@ import com.google.firebase.database.ValueEventListener;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Objects;
 
 import de.hdodenhof.circleimageview.CircleImageView;
 import retrofit2.Call;
@@ -81,10 +82,11 @@ public class MessagerActivity extends AppCompatActivity {
 
         apiService = Client.getClient("https://fcm.googleapis.com/").create(APIService.class);
 
+        CheckSendNotification();
+
         _btn_Send.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                notify = true;
                 String msg = _et_ContentSend.getText().toString();
                 if(!msg.equals("")){
                     FC_SendMessager(_fuser.getUid(), userid, msg);
@@ -201,9 +203,8 @@ public class MessagerActivity extends AppCompatActivity {
                 User user = snapshot.getValue(User.class);
                 if(notify) {
                     sendNotification(receiver, user.getUsername(), msg);
-
                 }
-                notify = false;
+
             }
 
             @Override
@@ -301,11 +302,40 @@ public class MessagerActivity extends AppCompatActivity {
     protected void onDestroy() {
         super.onDestroy();
         mContext = null;
+        reference = FirebaseDatabase.getInstance().getReference("Notifications").child("Users").child(_fuser.getUid());
+        HashMap<String,Object> checkNotifi = new HashMap<>();
+        checkNotifi.put("MessagerActivity", "notActive");
+        reference.setValue(checkNotifi);
     }
 
     @Override
     protected void onStart() {
         super.onStart();
         mContext = getBaseContext();
+        _fuser = FirebaseAuth.getInstance().getCurrentUser();
+        reference = FirebaseDatabase.getInstance().getReference("Notifications").child("Users").child(_fuser.getUid());
+                HashMap<String,Object> checkNotifi = new HashMap<>();
+        checkNotifi.put("MessagerActivity", "active");
+        reference.setValue(checkNotifi);
+    }
+
+    private void CheckSendNotification(){
+        DatabaseReference CheckNotification = FirebaseDatabase.getInstance().getReference("Notifications").child("Users").child(userid);
+
+        CheckNotification.addValueEventListener(new ValueEventListener() {
+            @Override
+            public void onDataChange(@NonNull DataSnapshot snapshot) {
+                if(Objects.equals(snapshot.child("MessagerActivity").getValue(), "active")){
+                    notify = false;
+                }else{
+                    notify = true;
+                }
+            }
+
+            @Override
+            public void onCancelled(@NonNull DatabaseError error) {
+
+            }
+        });
     }
 }

@@ -9,13 +9,14 @@ import android.net.Uri;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
-import androidx.core.app.NotificationCompat;
 
 import com.example.appchat.MessagerActivity;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
+
+import static androidx.core.app.NotificationCompat.Builder;
 
 public class MyFirebaseMessaging extends FirebaseMessagingService {
 
@@ -48,7 +49,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
 
         Uri defaultSound = RingtoneManager.getDefaultUri(RingtoneManager.TYPE_NOTIFICATION);
 
-        NotificationCompat.Builder builder = new NotificationCompat.Builder(this)
+        Builder builder = new Builder(this)
                 .setSmallIcon(Integer.parseInt(icon))
                 .setContentTitle(title)
                 .setContentText(body)
@@ -60,6 +61,7 @@ public class MyFirebaseMessaging extends FirebaseMessagingService {
         if(j > 0){
             i = j;
         }
+        assert noti != null;
         noti.notify(i,builder.build());
 
 
