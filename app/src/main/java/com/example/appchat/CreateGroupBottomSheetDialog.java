@@ -3,12 +3,11 @@ package com.example.appchat;
 import android.app.Dialog;
 import android.content.res.Resources;
 import android.os.Bundle;
-import android.view.Menu;
-import android.view.MenuInflater;
 import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
@@ -39,7 +38,7 @@ public class CreateGroupBottomSheetDialog  extends BottomSheetDialogFragment {
     private EditText etNameGroup;
     private ImageButton ibCreateGroup;
     private RecyclerView rvListUser;
-
+    private TextView tv_huy_create_group;
     private FirebaseAuth fAuth;
     private FirebaseUser fUser;
     private FirebaseDatabase fDatabase;
@@ -67,25 +66,34 @@ public class CreateGroupBottomSheetDialog  extends BottomSheetDialogFragment {
         bottomSheetDialog.setContentView(view);
         mBehavior = BottomSheetBehavior.from( (View) view.getParent());
         mBehavior.setState(BottomSheetBehavior.STATE_EXPANDED);
+        MapObject(view);
 
+        // Set EditText
+        etNameGroup.setWidth((int) ((Resources.getSystem().getDisplayMetrics().widthPixels)/1.5));
         // Firebase
         fAuth = FirebaseAuth.getInstance();
         fUser = fAuth.getCurrentUser();
         fDatabase = FirebaseDatabase.getInstance();
 
         arrListUser = new ArrayList<>();
-
         rvListUser = view.findViewById(R.id.RecyclerView_List_User_Add_Group);
         LinearLayoutManager layoutManager = new LinearLayoutManager(getContext(),LinearLayoutManager.VERTICAL, false);
         rvListUser.setLayoutManager(layoutManager);
 
-        MapObject(view);
+
         LoadUserJoinGroup();
 
+        // Event
         ibCreateGroup.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 CreateGroup();
+            }
+        });
+        tv_huy_create_group.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                mBehavior.setState(BottomSheetBehavior.STATE_HIDDEN);
             }
         });
 
@@ -98,6 +106,7 @@ public class CreateGroupBottomSheetDialog  extends BottomSheetDialogFragment {
     private void MapObject(View v){
         etNameGroup = v.findViewById(R.id.EditText_Name_Group);
         ibCreateGroup = v.findViewById(R.id.ImageButton_Create_Group);
+        tv_huy_create_group = v.findViewById(R.id.textView_Huy);
     }
     private void LoadUserJoinGroup(){
 
@@ -205,8 +214,4 @@ public class CreateGroupBottomSheetDialog  extends BottomSheetDialogFragment {
         }
     }
 
-    @Override
-    public void onCreateOptionsMenu(@NonNull Menu menu, @NonNull MenuInflater inflater) {
-        super.onCreateOptionsMenu(menu, inflater);
-    }
 }

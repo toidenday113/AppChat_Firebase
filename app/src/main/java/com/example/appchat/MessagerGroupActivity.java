@@ -50,6 +50,7 @@ public class MessagerGroupActivity extends AppCompatActivity {
     // Adapter
     private List<MessegerGroupChat> arrMGC;
     private MessagerGroupAdapter messagerGroupAdapter;
+    private String urlImage = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,7 +78,7 @@ public class MessagerGroupActivity extends AppCompatActivity {
         layoutManager.setStackFromEnd(true);
         rv_List_Messenger_Group.setLayoutManager(layoutManager);
         arrMGC   = new ArrayList<>();
-        messagerGroupAdapter = new MessagerGroupAdapter(this, arrMGC);
+        messagerGroupAdapter = new MessagerGroupAdapter(this, arrMGC, urlImage);
         rv_List_Messenger_Group.setAdapter(messagerGroupAdapter);
 
 
