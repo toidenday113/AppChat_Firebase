@@ -13,6 +13,8 @@ import android.widget.TextView;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.example.appchat.Adapter.MessagerGroupAdapter;
@@ -39,6 +41,7 @@ public class MessagerGroupActivity extends AppCompatActivity {
     private ImageButton ibSendText, ibSendImage;
     private ImageView ivAvatar;
     private GroupChat itemGroup;
+    private RecyclerView rv_List_Messenger_Group;
     //Firebase
     private FirebaseAuth fAuth;
     private FirebaseUser fUser;
@@ -68,13 +71,18 @@ public class MessagerGroupActivity extends AppCompatActivity {
         fAuth = FirebaseAuth.getInstance();
         fUser = fAuth.getCurrentUser();
         fDatabase = FirebaseDatabase.getInstance();
+
         // Config Adapter
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        layoutManager.setStackFromEnd(true);
+        rv_List_Messenger_Group.setLayoutManager(layoutManager);
         arrMGC   = new ArrayList<>();
         messagerGroupAdapter = new MessagerGroupAdapter(this, arrMGC);
-
+        rv_List_Messenger_Group.setAdapter(messagerGroupAdapter);
 
 
         getInformationGroup();
+        LoadMessengerGroup();
         EventObject();
     }
 
@@ -161,12 +169,14 @@ public class MessagerGroupActivity extends AppCompatActivity {
     }
 
     private void MapObject(){
+
         tvNameGroup = findViewById(R.id.TextView_Title_Group);
         ibSendText = findViewById(R.id.btn_send_text);
         ibSendImage = findViewById(R.id.btn_send_Image);
         ivAvatar = findViewById(R.id.ImageView_Avatar_Chat);
         etContentGroup = findViewById(R.id.et_Content_Group_Send);
         tbGroup = findViewById(R.id.ToolBar_Chat_Group);
+        rv_List_Messenger_Group = findViewById(R.id.rv_Content_Chat_Group);
 
     }
 }
