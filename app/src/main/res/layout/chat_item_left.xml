@@ -19,6 +19,16 @@
         android:layout_toRightOf="@id/profile_image"
         android:layout_marginLeft="5sp"
         android:padding="8sp"
-        android:text="Hello"/>
+        android:text="Hello"
+        android:textSize="20dp"/>
+
+    <ImageView
+        android:id="@+id/image_messenger"
+        android:layout_height="150dp"
+        android:layout_width="150dp"
+        android:padding="8sp"
+        android:layout_marginLeft="5sp"
+        android:layout_toRightOf="@id/profile_image"
+        android:visibility="gone"/>
 
 </RelativeLayout>

@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.appcompat.widget.LinearLayoutCompat
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical">
+
+    <androidx.appcompat.widget.LinearLayoutCompat
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content">
+
+        <ImageView
+            android:layout_height="56dp"
+            android:layout_width="wrap_content"
+            android:src="@drawable/ic_delete"/>
+        <TextView
+            android:id="@+id/textView_delete"
+            android:gravity="center_vertical"
+            android:layout_width="match_parent"
+            android:layout_height="56dp"
+            android:paddingLeft="20dp"
+            android:textSize="20dp"
+            android:text="Delete Messenger"/>
+
+    </androidx.appcompat.widget.LinearLayoutCompat>
+
+
+
+</androidx.appcompat.widget.LinearLayoutCompat>

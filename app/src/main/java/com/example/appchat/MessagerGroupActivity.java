@@ -1,16 +1,21 @@
 package com.example.appchat;
 
+import android.content.ContentResolver;
+import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextUtils;
 import android.text.TextWatcher;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -20,6 +25,7 @@ import com.bumptech.glide.Glide;
 import com.example.appchat.Adapter.MessagerGroupAdapter;
 import com.example.appchat.Model.GroupChat;
 import com.example.appchat.Model.MessegerGroupChat;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -29,6 +35,9 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -50,7 +59,11 @@ public class MessagerGroupActivity extends AppCompatActivity {
     // Adapter
     private List<MessegerGroupChat> arrMGC;
     private MessagerGroupAdapter messagerGroupAdapter;
-    private String urlImage = "";
+
+    // Image
+    private Uri fileUri;
+    private String myUrl;
+    private StorageTask storageTask;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,16 +86,18 @@ public class MessagerGroupActivity extends AppCompatActivity {
         fUser = fAuth.getCurrentUser();
         fDatabase = FirebaseDatabase.getInstance();
 
+        getInformationGroup();
+
         // Config Adapter
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
-        layoutManager.setStackFromEnd(true);
-        rv_List_Messenger_Group.setLayoutManager(layoutManager);
         arrMGC   = new ArrayList<>();
-        messagerGroupAdapter = new MessagerGroupAdapter(this, arrMGC, urlImage);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+
+        layoutManager.setStackFromEnd(true);
+        rv_List_Messenger_Group.hasFixedSize();
+        rv_List_Messenger_Group.setLayoutManager(layoutManager);
+        messagerGroupAdapter = new MessagerGroupAdapter(this, arrMGC, itemGroup.getId());
         rv_List_Messenger_Group.setAdapter(messagerGroupAdapter);
 
-
-        getInformationGroup();
         LoadMessengerGroup();
         EventObject();
     }
@@ -95,11 +110,13 @@ public class MessagerGroupActivity extends AppCompatActivity {
         hmMessengerGroup.put("id", key);
         hmMessengerGroup.put("sender", fUser.getUid());
         hmMessengerGroup.put("content", etContentGroup.getText().toString());
+        hmMessengerGroup.put("image","");
         RefMessenger.setValue(hmMessengerGroup).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     etContentGroup.setText("");
+                    messagerGroupAdapter.notifyDataSetChanged();
                 }
             }
         });
@@ -159,6 +176,17 @@ public class MessagerGroupActivity extends AppCompatActivity {
             }
         });
 
+        // Event Send Image
+        ibSendImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentSendImage = new Intent();
+                intentSendImage.setAction(Intent.ACTION_GET_CONTENT);
+                intentSendImage.setType("image/*");
+                startActivityForResult(intentSendImage.createChooser(intentSendImage, "Select Image"), 438);
+            }
+        });
+
     }
 
     private void getInformationGroup(){
@@ -179,5 +207,47 @@ public class MessagerGroupActivity extends AppCompatActivity {
         tbGroup = findViewById(R.id.ToolBar_Chat_Group);
         rv_List_Messenger_Group = findViewById(R.id.rv_Content_Chat_Group);
 
+    }
+    
+    // get Image
+    private String getFileExtension(Uri uri){
+        ContentResolver contentResolver = this.getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
+    }
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 438 && resultCode ==RESULT_OK && data !=null && data.getData() !=null ){
+            fileUri = data.getData();
+            final StorageReference storageReference = FirebaseStorage.getInstance().getReference("uploads").child(itemGroup.getId()).child(System.currentTimeMillis()+"."+getFileExtension(fileUri));
+            storageTask = storageReference.putFile(fileUri);
+            storageTask.continueWithTask(new Continuation() {
+                @Override
+                public Object then(@NonNull Task task) throws Exception {
+                    if(!task.isSuccessful()){
+                       throw task.getException();
+                    }
+                    return storageReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        Uri downloadUri = task.getResult();
+                        myUrl = downloadUri.toString();
+                        DatabaseReference RefMessengerGroup = fDatabase.getReference("Groups").child(itemGroup.getId()).child("Messengers");
+                        DatabaseReference RefMessenger = RefMessengerGroup.push();
+                        String key = RefMessenger.getKey();
+                        HashMap<String,Object> hmMessengerGroup = new HashMap<>();
+                        hmMessengerGroup.put("id", key);
+                        hmMessengerGroup.put("sender", fUser.getUid());
+                        hmMessengerGroup.put("content", etContentGroup.getText().toString());
+                        hmMessengerGroup.put("image",myUrl);
+                        RefMessenger.setValue(hmMessengerGroup);
+                    }
+                }
+            });
+        }
     }
 }

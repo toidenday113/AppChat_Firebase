@@ -14,6 +14,9 @@ import com.bumptech.glide.Glide;
 import com.example.appchat.Model.MessegerGroupChat;
 import com.example.appchat.Model.User;
 import com.example.appchat.R;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
+import com.google.android.material.bottomsheet.BottomSheetDialog;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
@@ -31,14 +34,15 @@ public class MessagerGroupAdapter extends RecyclerView.Adapter<MessagerGroupAdap
 
     private Context _mContext;
     private List<MessegerGroupChat> arrMessegeGroup;
-    private String UrlImage;
     private FirebaseUser fUser;
+    private String idGroup;
 
-    public MessagerGroupAdapter(Context _mContext, List<MessegerGroupChat> arrMessegeGroup, String urlImage) {
+    public MessagerGroupAdapter(Context _mContext, List<MessegerGroupChat> arrMessegeGroup, String idGroup) {
         this._mContext = _mContext;
         this.arrMessegeGroup = arrMessegeGroup;
-        this.UrlImage = urlImage;
+        this.idGroup = idGroup;
         fUser = FirebaseAuth.getInstance().getCurrentUser();
+
     }
 
 
@@ -56,10 +60,9 @@ public class MessagerGroupAdapter extends RecyclerView.Adapter<MessagerGroupAdap
     }
 
     @Override
-    public void onBindViewHolder(@NonNull final ViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull final ViewHolder holder, final int position) {
             final MessegerGroupChat mgc = arrMessegeGroup.get(position);
 
-            holder.tvContent.setText(mgc.getContent());
             if(!fUser.getUid().equals(mgc.getSender())) {
                 DatabaseReference RefUser = FirebaseDatabase.getInstance().getReference("Users").child(mgc.getSender());
                 RefUser.addValueEventListener(new ValueEventListener() {
@@ -77,6 +80,50 @@ public class MessagerGroupAdapter extends RecyclerView.Adapter<MessagerGroupAdap
                     }
                 });
             }
+
+            if(! mgc.getImage().equals("")){
+                holder.tvContent.setVisibility(View.GONE);
+                holder.ivImageMessenger.setVisibility(View.VISIBLE);
+                Glide.with(_mContext).load(mgc.getImage()).into(holder.ivImageMessenger);
+            }else{
+
+                holder.ivImageMessenger.setVisibility(View.GONE);
+                holder.tvContent.setVisibility(View.VISIBLE);
+                holder.tvContent.setText(mgc.getContent());
+            }
+
+            holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+                @Override
+                public boolean onLongClick(View v) {
+                    final BottomSheetDialog bottomSheetDialog = new BottomSheetDialog(_mContext);
+                    View view = LayoutInflater.from(_mContext).inflate(R.layout.layput_bottom_sheet_delete_messenger, null);
+                    bottomSheetDialog.setContentView(view);
+                    bottomSheetDialog.show();
+                    view.findViewById(R.id.textView_delete).setOnClickListener(new View.OnClickListener() {
+                        @Override
+                        public void onClick(View v) {
+                            DatabaseReference RefDelete = FirebaseDatabase.getInstance().getReference("Groups").child(idGroup).child("Messengers").child(arrMessegeGroup.get(position).getId());
+                            RefDelete.removeValue().addOnCompleteListener(new OnCompleteListener<Void>() {
+                                @Override
+                                public void onComplete(@NonNull Task<Void> task) {
+                                    if (task.isSuccessful()){
+//                                        arrMessegeGroup.remove(position);
+                                        notifyDataSetChanged();
+
+                                        bottomSheetDialog.cancel();
+                                    }
+                                }
+                            });
+
+
+                        }
+                    });
+
+                    return true;
+                }
+            });
+
+
     }
 
     @Override
@@ -86,12 +133,12 @@ public class MessagerGroupAdapter extends RecyclerView.Adapter<MessagerGroupAdap
 
      class ViewHolder extends RecyclerView.ViewHolder{
         TextView tvContent;
-        ImageView ivAvatar;
+        ImageView ivAvatar, ivImageMessenger;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             tvContent = itemView.findViewById(R.id.tv_Message);
             ivAvatar = itemView.findViewById(R.id.profile_image);
-
+            ivImageMessenger = itemView.findViewById(R.id.image_messenger);
         }
     }
 

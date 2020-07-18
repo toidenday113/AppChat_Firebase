@@ -12,6 +12,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -95,6 +96,17 @@ public class MessagerActivity extends AppCompatActivity {
                 }
             }
         });
+        _btn_SendImage.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentImage = new Intent();
+                intentImage.setAction(Intent.ACTION_GET_CONTENT);
+                intentImage.setType("image/*");
+                startActivityForResult(intentImage.createChooser(intentImage, "Select Image"), 438);
+            }
+        });
+
+
 
         FC_LoadProfile();
         FC_CheckUserInputContent();
@@ -214,6 +226,7 @@ public class MessagerActivity extends AppCompatActivity {
         });
 
     }
+
     private void sendNotification(String receiver, final String username, final String message){
         DatabaseReference tokens = FirebaseDatabase.getInstance().getReference("Tokens");
         Query query = tokens.orderByKey().equalTo(receiver);
@@ -337,5 +350,13 @@ public class MessagerActivity extends AppCompatActivity {
 
             }
         });
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        if(requestCode == 438 && resultCode == RESULT_OK && data !=null && data.getData() != null){
+
+        }
     }
 }
