@@ -1,5 +1,6 @@
 package com.example.appchat.TabPage;
 
+import android.content.Context;
 import android.content.DialogInterface;
 import android.os.Bundle;
 import android.text.InputType;
@@ -55,8 +56,10 @@ public class NhomFragment extends Fragment {
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
 
-
         root = inflater.inflate(R.layout.fragment_nhom, container, false);
+
+
+
 
         fAuth = FirebaseAuth.getInstance();
         fUser = fAuth.getCurrentUser();
@@ -202,5 +205,11 @@ public class NhomFragment extends Fragment {
 
             }
         });
+    }
+
+    @Override
+    public void onAttach(@NonNull Context context) {
+        super.onAttach(context);
+       
     }
 }

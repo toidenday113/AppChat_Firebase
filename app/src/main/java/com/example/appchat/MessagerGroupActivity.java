@@ -1,12 +1,16 @@
 package com.example.appchat;
 
 import android.content.ContentResolver;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
+import android.text.InputType;
 import android.text.TextUtils;
 import android.text.TextWatcher;
+import android.view.Menu;
+import android.view.MenuItem;
 import android.view.View;
 import android.webkit.MimeTypeMap;
 import android.widget.EditText;
@@ -16,6 +20,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.appcompat.app.AlertDialog;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -90,13 +95,7 @@ public class MessagerGroupActivity extends AppCompatActivity {
 
         // Config Adapter
         arrMGC   = new ArrayList<>();
-        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
 
-        layoutManager.setStackFromEnd(true);
-        rv_List_Messenger_Group.hasFixedSize();
-        rv_List_Messenger_Group.setLayoutManager(layoutManager);
-        messagerGroupAdapter = new MessagerGroupAdapter(this, arrMGC, itemGroup.getId());
-        rv_List_Messenger_Group.setAdapter(messagerGroupAdapter);
 
         LoadMessengerGroup();
         EventObject();
@@ -123,6 +122,13 @@ public class MessagerGroupActivity extends AppCompatActivity {
     }
 
     private void LoadMessengerGroup(){
+
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this, RecyclerView.VERTICAL, false);
+        layoutManager.setStackFromEnd(true);
+        rv_List_Messenger_Group.hasFixedSize();
+        rv_List_Messenger_Group.setLayoutManager(layoutManager);
+
+
         DatabaseReference RefLoadMessengerGroup = fDatabase.getReference("Groups").child(itemGroup.getId()).child("Messengers");
         RefLoadMessengerGroup.addValueEventListener(new ValueEventListener() {
             @Override
@@ -132,7 +138,9 @@ public class MessagerGroupActivity extends AppCompatActivity {
                         MessegerGroupChat mgc = dataSnapshot.getValue(MessegerGroupChat.class);
                         arrMGC.add(mgc);
                     }
-                    messagerGroupAdapter.notifyDataSetChanged();
+                messagerGroupAdapter = new MessagerGroupAdapter(MessagerGroupActivity.this, arrMGC, itemGroup.getId());
+                rv_List_Messenger_Group.setAdapter(messagerGroupAdapter);
+                   // messagerGroupAdapter.notifyDataSetChanged();
             }
 
             @Override
@@ -184,6 +192,17 @@ public class MessagerGroupActivity extends AppCompatActivity {
                 intentSendImage.setAction(Intent.ACTION_GET_CONTENT);
                 intentSendImage.setType("image/*");
                 startActivityForResult(intentSendImage.createChooser(intentSendImage, "Select Image"), 438);
+            }
+        });
+
+        // Event Upload Avatar group
+        ivAvatar.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intentUploadAvatarGroup = new Intent();
+                intentUploadAvatarGroup.setAction(Intent.ACTION_GET_CONTENT);
+                intentUploadAvatarGroup.setType("image/*");
+                startActivityForResult(intentUploadAvatarGroup.createChooser(intentUploadAvatarGroup, "Select Image"), 448);
             }
         });
 
@@ -245,9 +264,110 @@ public class MessagerGroupActivity extends AppCompatActivity {
                         hmMessengerGroup.put("content", etContentGroup.getText().toString());
                         hmMessengerGroup.put("image",myUrl);
                         RefMessenger.setValue(hmMessengerGroup);
+
+                    }
+                }
+            });
+        }
+        if(requestCode == 448 && resultCode == RESULT_OK && data !=null && data.getData() != null){
+            fileUri = data.getData();
+            final StorageReference storageReferenceAvatar = FirebaseStorage.getInstance().getReference("uploads").child(itemGroup.getId()).child("avatar").child(System.currentTimeMillis()+"."+getFileExtension(fileUri));
+            storageTask = storageReferenceAvatar.putFile(fileUri);
+            storageTask.continueWithTask(new Continuation() {
+                @Override
+                public Object then(@NonNull Task task) throws Exception {
+
+                    if( ! task.isSuccessful()){
+                        throw  task.getException();
+                    }
+                    return storageReferenceAvatar.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        Uri downloadUri = task.getResult();
+                        myUrl = downloadUri.toString();
+                        DatabaseReference RefUpdateAvatarGroup = FirebaseDatabase.getInstance().getReference("Groups").child(itemGroup.getId());
+                        HashMap<String,Object> hmUpdateAvatarGroup = new HashMap<>();
+                        hmUpdateAvatarGroup.put("avatar", myUrl);
+
+                        RefUpdateAvatarGroup.updateChildren(hmUpdateAvatarGroup).addOnCompleteListener(new OnCompleteListener<Void>() {
+                            @Override
+                            public void onComplete(@NonNull Task<Void> task) {
+                                Glide.with(MessagerGroupActivity.this).load(myUrl).into(ivAvatar);
+                            }
+                        });
                     }
                 }
             });
         }
     }
+
+    @Override
+    public boolean onCreateOptionsMenu(Menu menu) {
+        getMenuInflater().inflate(R.menu.option_group, menu);
+        return true;
+    }
+
+    @Override
+    public boolean onOptionsItemSelected(@NonNull MenuItem item) {
+        
+        switch(item.getItemId()){
+            case R.id.menu_edit_name_group:
+                EditNameGroup();
+                break;
+            case R.id.menu_add_user_group:
+
+                break;
+            case R.id.menu_delete_group:
+                break;
+        }
+        
+        return super.onOptionsItemSelected(item);
+    }
+
+    private void EditNameGroup(){
+        String NameGroupOld = tvNameGroup.getText().toString();
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("Edit Name Group");
+
+        // Set up the input
+        final EditText input = new EditText(this);
+        // Specify the type of input expected; this, for example, sets the input as a password, and will mask the text
+        input.setInputType(InputType.TYPE_CLASS_TEXT | InputType.TYPE_CLASS_TEXT);
+        input.setHint("Name group...");
+        input.setText(NameGroupOld);
+        builder.setView(input);
+
+
+        // Set up the buttons
+        builder.setPositiveButton("OK", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(final DialogInterface dialog, int which) {
+                final String NameGroupNew = input.getText().toString();
+                DatabaseReference RefEditNameGroup = FirebaseDatabase.getInstance().getReference("Groups").child(itemGroup.getId());
+                HashMap<String,Object> hmEditNameGroup = new HashMap<>();
+                hmEditNameGroup.put("name", NameGroupNew);
+                RefEditNameGroup.updateChildren(hmEditNameGroup).addOnCompleteListener(new OnCompleteListener<Void>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Void> task) {
+                        if(task.isSuccessful()){
+                            tvNameGroup.setText(NameGroupNew);
+                            dialog.cancel();
+                        }
+                    }
+                });
+            }
+        });
+        builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                dialog.cancel();
+            }
+        });
+        builder.show();
+    }
+
+
 }

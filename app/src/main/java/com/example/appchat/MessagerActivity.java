@@ -1,11 +1,14 @@
 package com.example.appchat;
 
+import android.content.ContentResolver;
 import android.content.Context;
 import android.content.Intent;
+import android.net.Uri;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.View;
+import android.webkit.MimeTypeMap;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.TextView;
@@ -28,6 +31,7 @@ import com.example.appchat.Notifications.MyRespone;
 import com.example.appchat.Notifications.Sender;
 import com.example.appchat.Notifications.Token;
 import com.example.appchat.TabPage.APIService;
+import com.google.android.gms.tasks.Continuation;
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
@@ -38,6 +42,9 @@ import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.Query;
 import com.google.firebase.database.ValueEventListener;
+import com.google.firebase.storage.FirebaseStorage;
+import com.google.firebase.storage.StorageReference;
+import com.google.firebase.storage.StorageTask;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -64,6 +71,9 @@ public class MessagerActivity extends AppCompatActivity {
 
     private Intent intent;
     private  String userid;
+    private Uri fileUri;
+    private String myUrl;
+    private StorageTask uploadTask;
 
     private List<Chat> _mChat;
     private MessagerAdapter messagerAdapter;
@@ -71,6 +81,7 @@ public class MessagerActivity extends AppCompatActivity {
 
     private APIService apiService;
     private boolean notify = false;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -90,7 +101,7 @@ public class MessagerActivity extends AppCompatActivity {
             public void onClick(View v) {
                 String msg = _et_ContentSend.getText().toString();
                 if(!msg.equals("")){
-                    FC_SendMessager(_fuser.getUid(), userid, msg);
+                    FC_SendMessager(_fuser.getUid(), userid, msg, "");
                     _btn_SendImage.setVisibility(View.VISIBLE);
                     _et_ContentSend.setText("");
                 }
@@ -174,14 +185,20 @@ public class MessagerActivity extends AppCompatActivity {
         });
     }
 
-    private void FC_SendMessager(String sender, final String receiver, String message){
+    private void FC_SendMessager(String sender, final String receiver, String message, String image){
+
         DatabaseReference reference_send = FirebaseDatabase.getInstance().getReference();
+        DatabaseReference RefSend = reference_send.child("Chats").push();
+        String key = RefSend.getKey();
+
         HashMap<String, Object> hashMap = new HashMap<>();
+        hashMap.put("id", key);
         hashMap.put("sender", sender);
         hashMap.put("receiver", receiver);
         hashMap.put("message", message);
+        hashMap.put("image", image);
 
-        reference_send.child("Chats").push().setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
+        RefSend.setValue(hashMap).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if( !task.isSuccessful()){
@@ -356,7 +373,34 @@ public class MessagerActivity extends AppCompatActivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
         if(requestCode == 438 && resultCode == RESULT_OK && data !=null && data.getData() != null){
-
+            fileUri = data.getData();
+            final StorageReference storageReference = FirebaseStorage.getInstance().getReference("uploads").child(_fuser.getUid()+"@"+ userid).child(System.currentTimeMillis()+"."+getFileExtension(fileUri));
+            uploadTask = storageReference.putFile(fileUri);
+            uploadTask.continueWithTask(new Continuation() {
+                @Override
+                public Object then(@NonNull Task task) throws Exception {
+                    if(!task.isSuccessful()){
+                        throw  task.getException();
+                    }
+                    return storageReference.getDownloadUrl();
+                }
+            }).addOnCompleteListener(new OnCompleteListener<Uri>() {
+                @Override
+                public void onComplete(@NonNull Task<Uri> task) {
+                    if(task.isSuccessful()){
+                        //Toast.makeText(mContext, "Send", Toast.LENGTH_SHORT).show();
+                        Uri downloadUri = task.getResult();
+                        myUrl = downloadUri.toString();
+                        FC_SendMessager(_fuser.getUid(), userid, "", myUrl);
+                    }
+                }
+            });
         }
+    }
+
+    private String getFileExtension(Uri uri){
+        ContentResolver contentResolver = this.getContentResolver();
+        MimeTypeMap mimeTypeMap = MimeTypeMap.getSingleton();
+        return mimeTypeMap.getExtensionFromMimeType(contentResolver.getType(uri));
     }
 }

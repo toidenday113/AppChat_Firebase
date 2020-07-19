@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:android="http://schemas.android.com/apk/res/android">
+
+    <item
+        android:name="actionOverflowMenuStyle"
+        android:id="@+id/menu_edit_name_group"
+        android:title="Edit name Group">
+        @style/Widget.MaterialComponents.PopupMenu.Overflow
+    </item>
+    <item
+        android:name="actionOverflowMenuStyle"
+        android:id="@+id/menu_delete_group"
+        android:title="Delete Group" >
+        @style/Widget.MaterialComponents.PopupMenu.Overflow
+    </item>
+
+    <item
+        android:name="actionOverflowMenuStyle"
+        android:id="@+id/menu_add_user_group"
+        android:title="Join User Group">
+        @style/Widget.MaterialComponents.PopupMenu.Overflow
+    </item>
+
+</menu>
